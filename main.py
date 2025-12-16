@@ -24,3 +24,8 @@ async def ruta_protegida(authorization: str = Header(None)):
         raise HTTPException(status_code=401, detail="No autorizado")
     else:
         return {"mensaje": "Acceso permitido", "usuario": Userid}
+
+
+@app.get("/health")
+async def health_check():
+    return {"status": "OK"}
