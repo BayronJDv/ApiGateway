@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 import os 
 import httpx
@@ -5,9 +6,7 @@ from fastapi import APIRouter, HTTPException, Path, Query
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
-
 PRODUCTS_SERVICE_URL = os.getenv("PRODUCTS_SERVICE_URL", "http://localhost:5000")
-
 
 @router.get("/search")
 async def search_products(
