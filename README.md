@@ -37,4 +37,4 @@ El servidor estará disponible en `http://localhost:8000`
 
 ## Rutas disponibles
 
-- `GET /orders` - Acceso protegido. Requiere header `Authorization: Bearer <token>`
+- `GET /example` - Acceso protegido. Requiere header `Authorization: Bearer <token>`
