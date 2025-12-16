@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 
 import httpx
@@ -5,8 +6,8 @@ from fastapi import APIRouter, HTTPException, Path, Query
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
-
-PRODUCTS_SERVICE_URL = "http://localhost:5000"  # URL del servicio Flask
+# URL del servicio Flask
+PRODUCTS_SERVICE_URL = os.getenv("PRODUCTS_SERVICE_URL")
 
 
 @router.get("/search")

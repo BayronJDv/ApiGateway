@@ -30,7 +30,7 @@ VITE_SUPABASE_ANON_KEY=tu_anon_key
 
 Ejecuta el servidor:
 ```bash
-fastapi dev app.py
+fastapi dev main.py
 ```
 
 El servidor estará disponible en `http://localhost:8000`
