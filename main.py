@@ -4,7 +4,7 @@ from supabase_auth.types import User
 from app.core.Auth import is_authenticated
 from app.core.config import supabase
 from app.core.cors import setup_cors
-from app.routers import admin_products, cart, products
+from app.routers import admin_products, cart, products,order,payment
 
 app = FastAPI(title="API Gateway")
 
@@ -15,7 +15,8 @@ setup_cors(app)
 app.include_router(products.router)
 app.include_router(admin_products.router)
 app.include_router(cart.router)
-
+app.include_router(order.router)
+app.include_router(payment.router)
 
 @app.get("/example")
 async def ruta_protegida(authorization: str = Header(None)):

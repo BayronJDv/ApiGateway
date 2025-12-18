@@ -1,21 +1,56 @@
-from fastapi import APIRouter, Header, Path
+from fastapi import APIRouter, Header, Path, HTTPException
+from ..core.Auth import is_authenticated, is_admin
+import httpx
+import os 
+
+PRODUCTS_SERVICE_URL = os.getenv("PRODUCTS_SERVICE_URL", "http://localhost:5000")
 
 router = APIRouter(
     prefix="/admin/products",
     tags=["Admin Products"]
 )
 
-@router.get("")
+@router.get("/getall")
 async def admin_get_products(
-    authorization: str = Header(...)
-):
+    authorization: str = Header(...)):
     """
     SOLO ADMIN
 
     Devuelve:
     - Lista completa de productos
     """
-    pass
+    print("peticion admin_get_products recibida")
+    role = is_admin(authorization)
+    if role != "admin":
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.get(
+                f"{PRODUCTS_SERVICE_URL}/allproducts"
+            )
+        print("Response from product service:", response)
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 
+
+# crear un producto 
+@router.post("/add")
+async def admin_create_product(
+    authorization: str = Header(...),
+    product_data: dict = None
+):
+    role = is_admin(authorization)
+    if role != "admin":
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.post(
+                f"{PRODUCTS_SERVICE_URL}/add",
+                json=product_data
+            )
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{product_id}")
@@ -48,10 +83,11 @@ async def admin_create_product(
     pass
 
 
-@router.put("/{product_id}")
+@router.put("/edit/{product_id}")
 async def admin_update_product(
     product_id: int = Path(...),
-    authorization: str = Header(...)
+    authorization: str = Header(...),
+    product_data: dict = None
 ):
     """
     SOLO ADMIN
@@ -62,10 +98,21 @@ async def admin_update_product(
     Devuelve:
     - Producto actualizado
     """
-    pass
+    role = is_admin(authorization,)
+    if role != "admin":
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.put(
+                f"{PRODUCTS_SERVICE_URL}/edit/{product_id}",
+                json=product_data
+            )
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.delete("/{product_id}")
+@router.delete("/delete/{product_id}")
 async def admin_delete_product(
     product_id: int = Path(...),
     authorization: str = Header(...)
@@ -76,4 +123,15 @@ async def admin_delete_product(
     Devuelve:
     - Mensaje de confirmación
     """
-    pass
+
+    role = is_admin(authorization)
+    if role != "admin":
+        raise HTTPException(status_code=403, detail="Acceso denegado")
+    try:
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            response = await client.delete(
+                f"{PRODUCTS_SERVICE_URL}/delete/{product_id}",
+            )
+        return response.json()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

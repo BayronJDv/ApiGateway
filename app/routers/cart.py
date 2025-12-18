@@ -7,8 +7,8 @@ from ..core.Auth import is_authenticated
 
 router = APIRouter(prefix="/cart", tags=["Cart"])
 
-CART_SERVICE_URL = os.getenv("CART_SERVICE_URL")
-PRODUCTS_SERVICE_URL = os.getenv("PRODUCTS_SERVICE_URL")
+CART_SERVICE_URL = os.getenv("CART_SERVICE_URL", "http://localhost:5001")
+PRODUCTS_SERVICE_URL = os.getenv("PRODUCTS_SERVICE_URL", "http://localhost:5000")
 
 
 @router.post("")
